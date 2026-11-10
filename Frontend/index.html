@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>        
+        const addNote = async () => {  //post
+            const newNote = document.getElementById("newNote").value;
+            document.getElementById("newNote").value = "";
+ 
+            await axios.post("http://localhost:3000/notes", {
+                note: newNote,   
+            }, {
+                headers: {
+                    token: localStorage.getItem("token")
+                }
+            });
+
+            const notesDiv = document.createElement("div");
+            notesDiv.innerHTML = newNote;
+            document.getElementById("notes").appendChild(notesDiv);
+        };
+
+        const showNotes = async () => { //get
+            const response = await axios.get("http://localhost:3000/notes", {
+                headers: {
+                    token: localStorage.getItem("token")
+                }
+            });
+
+            const notes = response.data.notes;
+
+            document.getElementById("notes").innerHTML = "";
+
+            for (const i = 0; i<notes.length; i++) {
+                const notesDiv = document.createElement("div");
+                notesDiv.innerHTML = notes[i];
+                document.getElementById("notes").appendChild(notesDiv);
+            };
+        };
+
+        showNotes();
+    </script>
+</head>
+<body>
+    <div style="display: flex; justify-content: space-between; padding: 200px 300px;">
+        <div id="notes">
+            Loading...
+        </div>
+        <div>
+            <input id="newNote" type="text" placeholder="write a note">
+            <button onclick="addNote()">Add Note</button>
+        </div>
+    </div>
+
+</body>
+</html>
